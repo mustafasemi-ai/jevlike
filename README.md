@@ -103,110 +103,22 @@ a model of this shape, trained this way, behaves this way.
 
 ## Beyond text: the same gate on manufacturing sensor data
 
-Is the finding specific to text and LLMs? We asked the same question where
+Is the finding specific to text and LLMs? The same question was asked where
 confidence gating is called *virtual metrology*: predict quality from process
 sensors, auto-release what the model is sure about, physically measure the
-rest. Here the shift is not constructed — it is time. Full chronological log,
-including wrong turns and corrections: [`docs/secom-log.md`](docs/secom-log.md).
+rest. That study has its own repository:
+**[gate-under-drift](https://github.com/mustafasemi-ai/gate-under-drift)**.
 
-### SECOM: the failure changes shape
+In short: on gas sensor data the overconfidence shows up again (87% confident
+and 50% right in the last batch), but miscalibration and gate failure turn out
+to be different events, validation does not predict which training run's gate
+will break, and disagreement between runs is the one label-free signal that
+separates harmful drift from harmless. On SECOM wafers no model of 28 works
+after the shift, including this repo's fine-tuned Qwen3.
 
-UCI SECOM, 1,567 wafers, 590 sensors. Train on the first 60% of the period,
-test on the last 40%.
-
-| | early period | later period |
-|---|---|---|
-| accuracy | 0.911 | 0.947 |
-| ECE | 0.042 | 0.060 |
-| AUC | 0.664 | **0.512** |
-| fail rate among released | 3.7% | 5.0% |
-| fail rate among held back | 12.2% | 3.9% |
-
-Accuracy goes up and ECE barely moves, because the failure rate falls.
-Meanwhile ranking drops to chance and the gate stops selecting. On text the
-failure was overconfidence, visible in ECE; here it is a ranking collapse that
-ECE does not see.
-
-- **It is not the model.** 28 models from 9 families under one protocol
-  (boosted trees, TabPFN, MLPs, sequence models, the fine-tuned Qwen3 itself):
-  none exceeds AUC 0.59 in the later period, none beats "always answer pass".
-- **It is temporal.** With a same-size random split the held-out AUC is
-  0.57–0.70; chronologically it is 0.45–0.55. The ranges do not overlap.
-- **A drift alarm does not help.** It is sound and never stops ringing: every
-  week of this line is distinguishable from every other.
-- **Retraining does not help either.** Retraining every 100 wafers does not
-  beat a frozen model.
-
-### Gas sensor drift: miscalibration and gate failure are different events
-
-UCI Gas Sensor Array Drift, 13,910 measurements over 36 months in ten batches.
-Trained on batches 1–3, every later batch scored separately. Five seeds.
-
-| batch | accuracy | mean confidence | ECE | accuracy above the 0.99 gate |
-|---|---|---|---|---|
-| in-domain | 0.990 | 0.985 | 0.008 | 0.998 |
-| 4 | 0.814 | 0.965 | 0.151 | **0.893** |
-| 6 | 0.758 | 0.857 | 0.119 | 0.994 |
-| 7 | 0.662 | 0.810 | 0.155 | 0.999 |
-| 9 | 0.633 | 0.773 | 0.156 | 1.000 |
-| 10 | 0.500 | 0.873 | 0.373 | **0.857** |
-
-The overconfidence is the text result again, on sensors: in the last batch the
-model is 87% confident and 50% right. The gate is a different story. In
-batches 6, 7 and 9 the model has lost a third of its accuracy and the gate
-still keeps its promise, by releasing far fewer items. In batches 4, 8 and 10
-it breaks. One part of the text result is *not* reproduced: the gap does not
-clearly grow as the threshold is tightened.
-
-### Validation does not tell you which gate will break
-
-50 training runs of the same pipeline, indistinguishable in validation:
-
-| quantity | mean | min | max |
-|---|---|---|---|
-| in-domain accuracy | 0.990 | 0.987 | 0.992 |
-| later accuracy | 0.635 | 0.622 | 0.649 |
-| later error among released | 0.063 | 0.030 | **0.176** |
-
-- The gate's own error in validation is uncorrelated with its error later
-  (Spearman +0.20, p = 0.16) — at three thresholds and for two model families.
-- Averaging five runs removes the lottery (worst case 0.217 → 0.030 at equal
-  share released) but does not fix the gate: batches 4, 8 and 10 defeat every
-  run.
-- Model choice matters more than run choice, and validation is blind to both:
-  MLP and boosted trees validate identically, and after drift the trees' gate
-  is five times worse (0.264 against 0.052).
-
-### A label-free signal for *harmful* drift
-
-A drift detector answers "has the data changed?", and the answer is always
-yes. Disagreement between the deployed run and four companion runs, on the
-items it releases, separates broken gates from intact ones:
-
-| free signal | MLP, 0.99 gate | trees, 0.99 gate |
-|---|---|---|
-| disagreement among released, AUC | **0.926** | 0.797 |
-| share released, AUC | 0.519 | 0.494 |
-| mean confidence, AUC | 0.435 | 0.474 |
-| drift detector, AUC | 0.500 | 0.500 |
-
-It ranks, it does not measure: disagreement is 5–20× smaller than the true
-error, because the runs mostly make the same mistakes. And it fails when the
-companions are not independent — boosted trees are wrong on 35% of released
-items in batch 6 and disagree on 0.2%.
-
-### What is and isn't new in this part
-
-**Not new:** SECOM's collapse under time-ordered validation has been published
-by others; auditing released items to detect harmful shift is Podkopaev and
-Ramdas (2022) and, in virtual metrology, the Reliance Index and sampling
-decision schemes; disagreement as an error signal is Jiang et al. (2022).
-Both of the first two were checked *after* the work was done — the log says so.
-
-**Not found elsewhere in a brief search:** the 28-model comparison under one
-protocol with a same-size random-split control, the 50-run study of which gate
-breaks, and disagreement applied to a confidence gate under real sensor drift.
-Only abstracts were read.
+The sensor scripts and the working log ([`docs/secom-log.md`](docs/secom-log.md))
+are kept here as well, since the language-model run on SECOM
+(`scripts/secom_llm.py`) depends on this repo's trainer.
 
 ---
 
