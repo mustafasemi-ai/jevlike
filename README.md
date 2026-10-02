@@ -539,5 +539,32 @@ duplicate options.
 
 ## License
 
-MIT for the code. Datasets carry their own licenses — see `registry.py`.
-Model weights are additionally subject to the base model's (Qwen3) license.
+MIT for the code. Model weights are additionally subject to the base model's
+(Qwen3) license.
+
+**This repository redistributes no data**: no dataset files, no prediction
+dumps, no trained weights. The code downloads each dataset from its original
+host. The datasets carry their own licenses, as declared on their Hugging Face
+cards on 2 October 2026 (`LICENSES` in
+[`registry.py`](src/jevlike/data/registry.py)):
+
+| declared license | datasets |
+|---|---|
+| CC BY-NC 4.0 (non-commercial) | `facebook/anli` (in training), `lmsys/toxic-chat` (held-out eval only) |
+| CC BY-SA 3.0 / 4.0 | `fancyzhx/dbpedia_14`, `tals/vitaminc`, `allenai/ai2_arc`, `winvoker/turkish-sentiment-analysis-dataset` |
+| CC BY 3.0 / 4.0 | `clinc/clinc_oos`, `legacy-datasets/banking77` |
+| Apache 2.0 | `mteb/amazon_massive_intent`, `mteb/amazon_massive_scenario`, `google-research-datasets/go_emotions` |
+| MIT | `tau/commonsense_qa` |
+| CC0 | `google/civil_comments` |
+| "other" (own terms) | `Yelp/yelp_review_full`, `nyu-mll/glue`, `google-research-datasets/paws`, `dair-ai/emotion` |
+| "unknown" | `fancyzhx/ag_news`, `community-datasets/yahoo_answers_topics`, `stanfordnlp/sst2`, `cardiffnlp/tweet_eval`, `tdiggelm/climate_fever`, `ucirvine/sms_spam`, `allenai/openbookqa` |
+| not declared on the card | `SetFit/20_newsgroups`, `SetFit/sst5`, `SetFit/toxic_conversations`, `SetFit/enron_spam`, `Rowan/hellaswag`, `asparius/Turkish-Product-Review`, `maydogan/TRSAv1`, `AdaptLLM/finance-tasks` |
+
+Only the cards' license field was read, not the upstream terms behind "other",
+"unknown" or undeclared entries. Because the training mixture includes a
+non-commercial dataset, this is a research project and any adapter trained
+with it should be treated as non-commercial too.
+
+The sensor datasets (SECOM, Gas Sensor Array Drift) come from the UCI Machine
+Learning Repository; see their pages for terms and the citations in
+[`docs/secom-log.md`](docs/secom-log.md).

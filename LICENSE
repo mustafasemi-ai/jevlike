@@ -23,6 +23,6 @@ SOFTWARE.
 ---
 
 NOT: Bu depo yalnizca kodu kapsar. Egitimde kullanilan datasetlerin kendi
-lisanslari vardir ve bu lisans onlari kapsamaz; kaynak listesi icin
-src/jevlike/data/registry.py dosyasina bakin. Ureyen model agirliklari taban
+lisanslari vardir ve bu lisans onlari kapsamaz; kaynak listesi ve beyan edilen
+lisanslar icin src/jevlike/data/registry.py dosyasina (LICENSES) bakin. Ureyen model agirliklari taban
 modelin (Qwen3) lisansina da tabidir.

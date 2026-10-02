@@ -60,6 +60,10 @@ class TaskSpec:
     max_eval: int = 400
     notes: str = ""
 
+    @property
+    def license(self) -> str:
+        return LICENSES[self.hf_id]
+
 
 # ---------------------------------------------------------------------------
 # helpers
@@ -687,6 +691,47 @@ REGISTRY: list[TaskSpec] = [
         notes="HELD-OUT",
     ),
 ]
+
+
+#: License each dataset declares on its HF Hub card, read on 2026-10-02.
+#: "unknown" and "other" are the card's own values; "not declared" means the
+#: card has no license field. This repo downloads the datasets and redistributes
+#: none of them. Non-commercial ones (cc-by-nc-*) also constrain what may be done
+#: with weights trained on them.
+LICENSES: dict[str, str] = {
+    "legacy-datasets/banking77": "cc-by-4.0",
+    "clinc/clinc_oos": "cc-by-3.0",
+    "mteb/amazon_massive_intent": "apache-2.0",
+    "mteb/amazon_massive_scenario": "apache-2.0",
+    "fancyzhx/ag_news": "unknown",
+    "fancyzhx/dbpedia_14": "cc-by-sa-3.0",
+    "community-datasets/yahoo_answers_topics": "unknown",
+    "SetFit/20_newsgroups": "not declared",
+    "stanfordnlp/sst2": "unknown",
+    "SetFit/sst5": "not declared",
+    "Yelp/yelp_review_full": "other",
+    "dair-ai/emotion": "other",
+    "cardiffnlp/tweet_eval": "unknown",
+    "google-research-datasets/go_emotions": "apache-2.0",
+    "asparius/Turkish-Product-Review": "not declared",
+    "winvoker/turkish-sentiment-analysis-dataset": "cc-by-sa-4.0",
+    "maydogan/TRSAv1": "not declared",
+    "nyu-mll/glue": "other",
+    "facebook/anli": "cc-by-nc-4.0",
+    "tals/vitaminc": "cc-by-sa-3.0",
+    "tdiggelm/climate_fever": "unknown",
+    "google-research-datasets/paws": "other",
+    "google/civil_comments": "cc0-1.0",
+    "SetFit/toxic_conversations": "not declared",
+    "lmsys/toxic-chat": "cc-by-nc-4.0",
+    "ucirvine/sms_spam": "unknown",
+    "SetFit/enron_spam": "not declared",
+    "allenai/openbookqa": "unknown",
+    "allenai/ai2_arc": "cc-by-sa-4.0",
+    "Rowan/hellaswag": "not declared",
+    "tau/commonsense_qa": "mit",
+    "AdaptLLM/finance-tasks": "not declared",
+}
 
 
 def held_out_groups() -> frozenset[str]:
