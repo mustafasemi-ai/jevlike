@@ -1,0 +1,31 @@
+# python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# veri karisimi -- build.py ile yeniden uretilir, repoya girmez
+/data/
+/data_v2/
+/data_smoke/
+
+# egitim ciktilari
+/runs/
+!runs/.gitkeep
+
+# eval onbellegi (evals.typesafe.ai'den inen statik dosyalar)
+/data/typesafe_eval/
+
+# ayri deney, README'de yok
+laya_eval/
+
+# model agirliklari
+*.safetensors
+*.bin
+*.pt
+
+# ortam
+.env
+.env.*
